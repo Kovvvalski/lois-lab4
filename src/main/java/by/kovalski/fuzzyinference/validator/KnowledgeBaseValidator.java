@@ -9,11 +9,13 @@
 
 package by.kovalski.fuzzyinference.validator;
 
+import java.util.List;
+
 public interface KnowledgeBaseValidator {
 
     boolean validateKb();
 
-    boolean validateFuzzySet(String fuzzySet);
+    boolean validateFuzzyPredicate(String fuzzyPredicate);
 
-    boolean validateFuzzyImplication(String fuzzyImplication);
+    boolean validateBinaryFuzzyPredicate(String binaryFuzzyPredicateToken, Integer predicateElementsCount);
 }

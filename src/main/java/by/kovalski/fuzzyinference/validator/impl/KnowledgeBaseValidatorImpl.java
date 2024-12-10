@@ -11,8 +11,14 @@ package by.kovalski.fuzzyinference.validator.impl;
 
 import by.kovalski.fuzzyinference.validator.KnowledgeBaseValidator;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class KnowledgeBaseValidatorImpl implements KnowledgeBaseValidator {
 
+    private final String FUZZY_PREDICATE_NAMES_LINE_REGEX = "^[a-zA-Z]([a-zA-Z]*|[0-9]*)( [a-zA-Z]([a-zA-Z]*|[0-9]*))*$";
+    private final String FUZZY_PREDICATE_VALUES_LINE_REGEX = "^(((1\\.0)|(0\\.[0-9]*))(( 1\\.0)|( 0\\.[0-9]*))*)$";
 
     @Override
     public boolean validateKb() {
@@ -20,14 +26,27 @@ public class KnowledgeBaseValidatorImpl implements KnowledgeBaseValidator {
     }
 
     @Override
-    public boolean validateFuzzySet(String fuzzySet) {
-        String FUZZY_SET_REGEX = "^[a-zA-Z][0-9]? = \\{(<[a-z][0-9]?, ?[0|1].[0-9]+>, ?)*<[a-z][0-9]?, ?[0|1].[0-9]+>\\}$";
-        return fuzzySet.matches(FUZZY_SET_REGEX);
+    public boolean validateFuzzyPredicate(String fuzzyPredicateToken) {
+        var lines = fuzzyPredicateToken.split("\n");
+        return lines[0].matches(FUZZY_PREDICATE_NAMES_LINE_REGEX)
+                && Arrays.stream(lines[0].split(" "))
+                                         .collect(Collectors.toSet()).size() == lines[0].split(" ").length
+                && lines[1].matches(FUZZY_PREDICATE_VALUES_LINE_REGEX)
+                && lines[1].split(" ").length == lines[0].split(" ").length;
     }
 
     @Override
-    public boolean validateFuzzyImplication(String fuzzyImplication) {
-        String FUZZY_IMPLICATION_REGEX = "^[a-zA-Z][0-9]?\\([a-z]\\) ~> [a-zA-Z][0-9]?\\([a-z]\\)$";
-        return fuzzyImplication.matches(FUZZY_IMPLICATION_REGEX);
+    public boolean validateBinaryFuzzyPredicate(String binaryFuzzyPredicateToken, Integer predicateElementsCount) {
+        var lines = binaryFuzzyPredicateToken.split("\n");
+        int counter = 0;
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (i == 0) {
+                counter += line.matches(FUZZY_PREDICATE_NAMES_LINE_REGEX) ? 1 : 0;
+            } else {
+                counter += line.matches(FUZZY_PREDICATE_VALUES_LINE_REGEX) ? 1 : 0;
+            }
+        }
+        return counter == predicateElementsCount + 1;
     }
 }

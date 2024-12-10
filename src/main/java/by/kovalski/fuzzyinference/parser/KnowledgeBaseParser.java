@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface KnowledgeBaseParser {
 
-    List<FuzzyPredicate> parseFuzzySet();
+    FuzzyPredicate parseFuzzyPredicate();
 
-    List<BinaryFuzzyPredicate> parseFuzzyImplication(List<FuzzyPredicate> parsedSets);
+    BinaryFuzzyPredicate parseBinaryFuzzyPredicate(FuzzyPredicate fuzzyPredicate);
 }
