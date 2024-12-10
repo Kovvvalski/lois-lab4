@@ -36,11 +36,11 @@ public class FuzzyPremise {
     }
 
     void calculate() {
-        var transposedImplicationMatrix = transposedMatrix(binaryFuzzyPredicate.getRelationMatrix());
+        var transposedMatrix = transposedMatrix(binaryFuzzyPredicate.getRelationMatrix());
         Map<List<Pair<String, Double>>, Double> equations = new HashMap<>();
 
         // calculating equations
-        for (var entry : transposedImplicationMatrix.entrySet()) {
+        for (var entry : transposedMatrix.entrySet()) {
             equations.put(entry.getValue(), conclusion.getElements().get(entry.getKey()));
         }
 
@@ -68,6 +68,7 @@ public class FuzzyPremise {
         return transposedMatrix;
     }
 
+    // TODO log equations
     private void logEquations(Map<List<Pair<String, Double>>, Double> equations) {
         System.out.println("Formed equations:");
         for (var entry : equations.entrySet()) {
@@ -85,7 +86,7 @@ public class FuzzyPremise {
         Map<String, List<Pair<String, Double>>> implicationMatrix = new HashMap<>();
         implicationMatrix.put("x1", Arrays.asList(new Pair<>("y1", 0.9), new Pair<>("y2", 0.1), new Pair<>("y3", 0.2)));
         implicationMatrix.put("x2", Arrays.asList(new Pair<>("y1", 0.6), new Pair<>("y2", 0.5), new Pair<>("y3", 0.5)));
-        implicationMatrix.put("x3", Arrays.asList(new Pair<>("y1", 0.2), new Pair<>("y2", 0.1), new Pair<>("y3", 0.5)));
+        //implicationMatrix.put("x3", Arrays.asList(new Pair<>("y1", 0.2), new Pair<>("y2", 0.1), new Pair<>("y3", 0.5)));
         BinaryFuzzyPredicate binaryFuzzyPredicate = new BinaryFuzzyPredicate(conclusion, null, implicationMatrix);
 
         FuzzyPremise fuzzyPremise = new FuzzyPremise(binaryFuzzyPredicate, conclusion);
