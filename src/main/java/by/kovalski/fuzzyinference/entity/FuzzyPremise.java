@@ -6,11 +6,14 @@ import java.util.stream.Collectors;
 public class FuzzyPremise {
     private final BinaryFuzzyPredicate binaryFuzzyPredicate;
     private final FuzzyPredicate conclusion;
-    private List<Map<String, Pair<Double, Double>>> ranges;
+    private Map<List<Pair<String, Double>>, Double> equationsSystem;
+    private Set<Map<String, Pair<Double, Double>>> solutions;
 
     public FuzzyPremise(BinaryFuzzyPredicate binaryFuzzyPredicate, FuzzyPredicate conclusion) {
         this.binaryFuzzyPredicate = binaryFuzzyPredicate;
         this.conclusion = conclusion;
+
+        // если область определения вывода не соответствует области определения правила
         if (!binaryFuzzyPredicate.getRelationMatrix().values().stream().
                 allMatch(row -> row.stream().map(Pair::getKey).collect(Collectors.toSet()).
                         equals(conclusion.getElements().keySet()))) {
@@ -27,33 +30,120 @@ public class FuzzyPremise {
         return conclusion;
     }
 
-    public List<Map<String, Pair<Double, Double>>> getRanges() {
-        return ranges;
+    public Set<Map<String, Pair<Double, Double>>> getSolutions() {
+        return solutions;
     }
 
-    public void setRanges(List<Map<String, Pair<Double, Double>>> ranges) {
-        this.ranges = ranges;
+    public Map<List<Pair<String, Double>>, Double> getEquationsSystem() {
+        return equationsSystem;
     }
 
+    // метод расчета посылки
     void calculate() {
-        var transposedMatrix = transposedMatrix(binaryFuzzyPredicate.getRelationMatrix());
+        var matrix = binaryFuzzyPredicate.getRelationMatrix();
+        var transposedMatrix = transposeMatrix(matrix);
         Map<List<Pair<String, Double>>, Double> equations = new HashMap<>();
 
-        // calculating equations
+        // составляем уравнения
         for (var entry : transposedMatrix.entrySet()) {
             equations.put(entry.getValue(), conclusion.getElements().get(entry.getKey()));
         }
+        this.equationsSystem = equations;
 
-        for(var equation : equations.entrySet()) {
-            System.out.println(equation.getKey() + " = " + equation.getValue());
+        // инициализируем единственное решение как [1, 1]
+        Set<Map<String, Pair<Double, Double>>> equationsSolutions = new HashSet<>(Set.of(
+                matrix.keySet().stream().collect(Collectors.toMap(var -> var, var -> new Pair<>(0D, 1D)))));
+
+        for (var equation : equations.entrySet()) {
+
+            // находим решения для каждого уравнения из системы
+            var equationSolution = calculateEquationSolutions(equation.getKey(), equation.getValue());
+
+            // если уравнение не имеет решений - вся система не имеет решений
+            if (equationSolution.isEmpty()) {
+                solutions = Set.of();
+                return;
+            }
+
+            // пересекаем решения
+            equationsSolutions = intersectSolutions(equationsSolutions, equationSolution);
+
+            // если пересечений не найдено
+            if (equationsSolutions.isEmpty()) {
+                solutions = Set.of();
+                return;
+            }
         }
-
-        List<Map<String, Pair<Double, Double>>> ranges = new ArrayList<>();
-
-
+        solutions = equationsSolutions;
     }
 
-    private Map<String, List<Pair<String, Double>>> transposedMatrix(Map<String, List<Pair<String, Double>>> matrix) {
+    // метод расчета решения уравнения
+    private Set<Map<String, Pair<Double, Double>>> calculateEquationSolutions(List<Pair<String, Double>> leftPart, Double rightPart) {
+        Set<Map<String, Pair<Double, Double>>> ranges = new HashSet<>();
+        for (Pair<String, Double> kNormOperand : leftPart) {
+            Map<String, Pair<Double, Double>> currentRange = new HashMap<>();
+
+            // невозможно приравнять данный операнд k-нормы к правой части уравнения
+            if (kNormOperand.getValue() < rightPart) {
+                continue;
+            }
+
+            // вычисляем значение переменной
+            double varValue = rightPart / kNormOperand.getValue();
+            currentRange.put(kNormOperand.getKey(), new Pair<>(varValue, varValue));
+
+            // вычисляем значения промежутков для всех оставшихся переменных
+            for (var remainingEl : leftPart.stream()
+                    .filter(o -> !o.getKey().equals(kNormOperand.getKey()))
+                    .toList()) {
+
+                // вычисляем значение правой границы переменной
+                double rightBound = rightPart / remainingEl.getValue();
+                currentRange.put(remainingEl.getKey(), new Pair<>(0D, rightBound <= 1 ? rightBound : 1));
+            }
+            ranges.add(currentRange);
+        }
+        return ranges;
+    }
+
+    // метод для нахождения пересечений решений
+    private Set<Map<String, Pair<Double, Double>>> intersectSolutions(Set<Map<String, Pair<Double, Double>>> existingSols,
+                                                                      Set<Map<String, Pair<Double, Double>>> newSols) {
+
+        Set<Map<String, Pair<Double, Double>>> intersected = new HashSet<>();
+
+        // каждое новое решение пересекаем со всеми существующими
+        for (var newSol : newSols) {
+            for (var existingSol : existingSols) {
+                boolean isIntersected = true;
+                Map<String, Pair<Double, Double>> intersection = new HashMap<>();
+                for (String var : newSol.keySet()) {
+                    Pair<Double, Double> existingRange = existingSol.get(var);
+                    Pair<Double, Double> newRange = newSol.get(var);
+
+                    // проверяем на наличие пересечений
+                    if (!(existingRange.getKey() <= newRange.getValue() && newRange.getKey() <= existingRange.getValue())) {
+                        isIntersected = false;
+                        break;
+                    }
+
+                    // составляем новый промежуток из наиболее "узких" границ
+                    intersection.put(var, new Pair<>(Math.max(existingRange.getKey(), newRange.getKey()),
+                            Math.min(existingRange.getValue(), newRange.getValue())));
+                }
+
+                // если пересечение существует
+                if (isIntersected) {
+                    intersected.add(intersection);
+                }
+            }
+        }
+
+        return intersected;
+    }
+
+    // метод транспонирования матрица нечеткого бинарного предиката
+    private Map<String, List<Pair<String, Double>>> transposeMatrix(Map<String, List<Pair<String, Double>>> matrix) {
         Map<String, List<Pair<String, Double>>> transposedMatrix = new HashMap<>();
         List<String> conclusionElements = matrix.values().stream().findAny().get().
                 stream().map(Pair::getKey).toList();
@@ -68,13 +158,6 @@ public class FuzzyPremise {
         return transposedMatrix;
     }
 
-    // TODO log equations
-    private void logEquations(Map<List<Pair<String, Double>>, Double> equations) {
-        System.out.println("Formed equations:");
-        for (var entry : equations.entrySet()) {
-
-        }
-    }
 
     public static void main(String[] args) {
         Map<String, Double> elementsSet1 = new HashMap<>();
@@ -86,10 +169,12 @@ public class FuzzyPremise {
         Map<String, List<Pair<String, Double>>> implicationMatrix = new HashMap<>();
         implicationMatrix.put("x1", Arrays.asList(new Pair<>("y1", 0.9), new Pair<>("y2", 0.1), new Pair<>("y3", 0.2)));
         implicationMatrix.put("x2", Arrays.asList(new Pair<>("y1", 0.6), new Pair<>("y2", 0.5), new Pair<>("y3", 0.5)));
-        //implicationMatrix.put("x3", Arrays.asList(new Pair<>("y1", 0.2), new Pair<>("y2", 0.1), new Pair<>("y3", 0.5)));
         BinaryFuzzyPredicate binaryFuzzyPredicate = new BinaryFuzzyPredicate(conclusion, null, implicationMatrix);
 
         FuzzyPremise fuzzyPremise = new FuzzyPremise(binaryFuzzyPredicate, conclusion);
         fuzzyPremise.calculate();
+        for (var solution : fuzzyPremise.solutions) {
+            System.out.println(solution);
+        }
     }
 }
