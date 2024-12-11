@@ -96,6 +96,10 @@ public class Main {
 
         System.out.println("Решение системы:");
 
+        if(solutions.isEmpty()) {
+            System.out.println('∅');
+        }
+
         String solutionsStr = solutions.stream()
                 .map(solution -> "(" +
                         solution.entrySet().stream()
