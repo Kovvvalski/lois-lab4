@@ -20,6 +20,7 @@ public class FuzzyPremise {
     public FuzzyPremise(BinaryFuzzyPredicate binaryFuzzyPredicate, FuzzyPredicate conclusion) {
         this.binaryFuzzyPredicate = binaryFuzzyPredicate;
         this.conclusion = conclusion;
+        solutions = Set.of();
 
         // если область определения вывода не соответствует области определения правила
         if (!binaryFuzzyPredicate.getRelationMatrix().values().stream().
@@ -69,7 +70,6 @@ public class FuzzyPremise {
 
             // если уравнение не имеет решений - вся система не имеет решений
             if (equationSolution.isEmpty()) {
-                solutions = Set.of();
                 return;
             }
 
@@ -78,7 +78,6 @@ public class FuzzyPremise {
 
             // если пересечений не найдено
             if (equationsSolutions.isEmpty()) {
-                solutions = Set.of();
                 return;
             }
         }

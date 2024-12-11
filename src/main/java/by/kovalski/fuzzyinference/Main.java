@@ -38,33 +38,15 @@ public class Main {
 
 
 
-//        Map<String, Double> elementsSet1 = new HashMap<>();
-//        elementsSet1.put("y1", 0.9);
-//        elementsSet1.put("y2", 0.1);
-//        elementsSet1.put("y3", 0.2);
-//        FuzzyPredicate conclusion = new FuzzyPredicate("Set1", elementsSet1);
-//
-//        Map<String, List<Pair<String, Double>>> implicationMatrix = new HashMap<>();
-//        implicationMatrix.put("x1", Arrays.asList(new Pair<>("y1", 0.9), new Pair<>("y2", 0.1), new Pair<>("y3", 0.2)));
-//        implicationMatrix.put("x2", Arrays.asList(new Pair<>("y1", 0.6), new Pair<>("y2", 0.5), new Pair<>("y3", 0.5)));
-//        BinaryFuzzyPredicate binaryFuzzyPredicate = new BinaryFuzzyPredicate(conclusion, null, implicationMatrix);
-//
-//        FuzzyPremise fuzzyPremise = new FuzzyPremise(binaryFuzzyPredicate, conclusion);
-//        fuzzyPremise.calculate();
-//
-//        printEquationsSystem(fuzzyPremise);
-//        printSolutions(fuzzyPremise);
-
-
         Map<String, Double> elementsSet1 = new HashMap<>();
-        elementsSet1.put("y1", 0.7);
-        elementsSet1.put("y2", 0.3);
+        elementsSet1.put("y1", 0.9);
+        elementsSet1.put("y2", 0.1);
         elementsSet1.put("y3", 0.2);
         FuzzyPredicate conclusion = new FuzzyPredicate("Set1", elementsSet1);
 
         Map<String, List<Pair<String, Double>>> implicationMatrix = new HashMap<>();
-        implicationMatrix.put("x1", Arrays.asList(new Pair<>("y1", 0.7), new Pair<>("y2", 0.1), new Pair<>("y3", 0.2)));
-        implicationMatrix.put("x2", Arrays.asList(new Pair<>("y1", 0.7), new Pair<>("y2", 0.3), new Pair<>("y3", 0.1)));
+        implicationMatrix.put("x1", Arrays.asList(new Pair<>("y1", 0.9), new Pair<>("y2", 0.1), new Pair<>("y3", 0.2)));
+        implicationMatrix.put("x2", Arrays.asList(new Pair<>("y1", 0.6), new Pair<>("y2", 0.5), new Pair<>("y3", 0.5)));
         BinaryFuzzyPredicate binaryFuzzyPredicate = new BinaryFuzzyPredicate(conclusion, null, implicationMatrix);
 
         FuzzyPremise fuzzyPremise = new FuzzyPremise(binaryFuzzyPredicate, conclusion);
@@ -72,6 +54,24 @@ public class Main {
 
         printEquationsSystem(fuzzyPremise);
         printSolutions(fuzzyPremise);
+
+
+//        Map<String, Double> elementsSet1 = new HashMap<>();
+//        elementsSet1.put("y1", 0.7);
+//        elementsSet1.put("y2", 0.3);
+//        elementsSet1.put("y3", 0.2);
+//        FuzzyPredicate conclusion = new FuzzyPredicate("Set1", elementsSet1);
+//
+//        Map<String, List<Pair<String, Double>>> implicationMatrix = new HashMap<>();
+//        implicationMatrix.put("x1", Arrays.asList(new Pair<>("y1", 0.7), new Pair<>("y2", 0.1), new Pair<>("y3", 0.2)));
+//        implicationMatrix.put("x2", Arrays.asList(new Pair<>("y1", 0.7), new Pair<>("y2", 0.3), new Pair<>("y3", 0.1)));
+//        BinaryFuzzyPredicate binaryFuzzyPredicate = new BinaryFuzzyPredicate(conclusion, null, implicationMatrix);
+//
+//        FuzzyPremise fuzzyPremise = new FuzzyPremise(binaryFuzzyPredicate, conclusion);
+//        fuzzyPremise.calculate();
+//
+//        printEquationsSystem(fuzzyPremise);
+//        printSolutions(fuzzyPremise);
     }
 
     static void printEquationsSystem(FuzzyPremise fuzzyPremise) {
