@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    static String FILE_PATH = "src/main/resources/test.kb";
+    static String FILE_PATH = "src/main/resources/test1.kb";
 
     static KnowledgeBaseParser knowledgeBaseParser = new KBParserImpl(FILE_PATH, new KnowledgeBaseValidatorImpl());
 
