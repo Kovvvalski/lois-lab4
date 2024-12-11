@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class FuzzyPremise {
     private final BinaryFuzzyPredicate binaryFuzzyPredicate;
     private final FuzzyPredicate conclusion;
-    private Map<List<Pair<String, Double>>, Double> equationsSystem;
+    List<Pair<List<Pair<String, Double>>, Double>> equationsSystem;
     private Set<Map<String, Pair<Double, Double>>> solutions;
 
     public FuzzyPremise(BinaryFuzzyPredicate binaryFuzzyPredicate, FuzzyPredicate conclusion) {
@@ -43,7 +43,7 @@ public class FuzzyPremise {
         return solutions;
     }
 
-    public Map<List<Pair<String, Double>>, Double> getEquationsSystem() {
+    public List<Pair<List<Pair<String, Double>>, Double>> getEquationsSystem() {
         return equationsSystem;
     }
 
@@ -51,11 +51,11 @@ public class FuzzyPremise {
     public void calculate() {
         var matrix = binaryFuzzyPredicate.getRelationMatrix();
         var transposedMatrix = transposeMatrix(matrix);
-        Map<List<Pair<String, Double>>, Double> equations = new HashMap<>();
+        List<Pair<List<Pair<String, Double>>, Double>> equations = new ArrayList<>();
 
         // составляем уравнения
         for (var entry : transposedMatrix.entrySet()) {
-            equations.put(entry.getValue(), conclusion.getElements().get(entry.getKey()));
+            equations.add(new Pair<>(entry.getValue(), conclusion.getElements().get(entry.getKey())));
         }
         this.equationsSystem = equations;
 
@@ -63,7 +63,7 @@ public class FuzzyPremise {
         Set<Map<String, Pair<Double, Double>>> equationsSolutions = new HashSet<>(Set.of(
                 matrix.keySet().stream().collect(Collectors.toMap(var -> var, var -> new Pair<>(0D, 1D)))));
 
-        for (var equation : equations.entrySet()) {
+        for (var equation : equations) {
 
             // находим решения для каждого уравнения из системы
             var equationSolution = calculateEquationSolutions(equation.getKey(), equation.getValue());

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    static String FILE_PATH = "src/main/resources/test3.kb";
+    static String FILE_PATH = "src/main/resources/test1.kb";
 
     static KnowledgeBaseParser knowledgeBaseParser = new KBParserImpl(FILE_PATH, new KnowledgeBaseValidatorImpl());
 
@@ -43,10 +43,10 @@ public class Main {
     }
 
     static void printEquationsSystem(FuzzyPremise fuzzyPremise) {
-        Map<List<Pair<String, Double>>, Double> equationsSystem = fuzzyPremise.getEquationsSystem();
+        var equationsSystem = fuzzyPremise.getEquationsSystem();
 
         System.out.println("Система уравнений:");
-        for (Map.Entry<List<Pair<String, Double>>, Double> equation : equationsSystem.entrySet()) {
+        for (var equation : equationsSystem) {
             List<Pair<String, Double>> pairs = equation.getKey();
             Double result = equation.getValue();
 
@@ -84,7 +84,7 @@ public class Main {
                                 })
                                 .collect(Collectors.joining(" ∧ ")) +
                         ")")
-                .collect(Collectors.joining(" ∪ "));
+                .collect(Collectors.joining(" ∪\n"));
 
         System.out.println(solutionsStr);
     }
