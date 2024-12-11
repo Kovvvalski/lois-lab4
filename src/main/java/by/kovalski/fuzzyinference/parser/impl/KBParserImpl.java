@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class KBParserImpl implements KnowledgeBaseParser {
 
@@ -92,7 +93,7 @@ public class KBParserImpl implements KnowledgeBaseParser {
             throw new RuntimeException(e);
         }
         return tokens.stream()
-                .map(str -> str.startsWith("\n") ? str.replaceFirst("\n", "") : str).toList();
+                .map(str -> str.startsWith("\n") ? str.replaceFirst("\n", "") : str).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private String getFuzzyPredicateToken(List<String> tokens) {
