@@ -13,7 +13,6 @@ import by.kovalski.fuzzyinference.entity.FuzzyPredicate;
 import by.kovalski.fuzzyinference.entity.Pair;
 import by.kovalski.fuzzyinference.parser.KnowledgeBaseParser;
 import by.kovalski.fuzzyinference.validator.KnowledgeBaseValidator;
-import by.kovalski.fuzzyinference.validator.impl.KnowledgeBaseValidatorImpl;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -64,7 +63,7 @@ public class KBParserImpl implements KnowledgeBaseParser {
             for (int i = 0; i < args.length; i++) {
                 relMatrix.put(args[i], new ArrayList<>());
                 for (int j = 1; j < lines.length; j++) {
-                    relMatrix.get(args[i]).add(new Pair<>((String)predicateElementKeys.toArray()[0],
+                    relMatrix.get(args[i]).add(new Pair<>((String)predicateElementKeys.toArray()[j-1],
                             Double.valueOf(lines[j].split(" ")[i])));
                 }
             }
