@@ -33,7 +33,7 @@ public class KBParserImpl implements KnowledgeBaseParser {
 
     @Override
     public FuzzyPredicate parseFuzzyPredicate() {
-        Map<String, Double> elementSet = new TreeMap<>();
+        Map<String, Double> elementSet = new LinkedHashMap<>();
         String fuzzyPredicateToken = getFuzzyPredicateToken(getTokens());
         if (kbValidator.validateFuzzyPredicate(fuzzyPredicateToken)) {
             var lines = fuzzyPredicateToken.split("\n");
@@ -48,8 +48,8 @@ public class KBParserImpl implements KnowledgeBaseParser {
 
     @Override
     public BinaryFuzzyPredicate parseBinaryFuzzyPredicate(FuzzyPredicate fuzzyPredicate) {
-        Map<String, List<Pair<String, Double>>> relMatrix = new TreeMap<>();
-        Set<String> predicateElementKeys = ((TreeMap<String, Double>)fuzzyPredicate.getElements()).navigableKeySet();
+        Map<String, List<Pair<String, Double>>> relMatrix = new LinkedHashMap<>();
+        Set<String> predicateElementKeys = fuzzyPredicate.getElements().keySet();
         String binaryFuzzyPredicateToken = getBinaryFuzzyPredicateToken(getTokens(), predicateElementKeys.size());
         if (Arrays.stream(binaryFuzzyPredicateToken
                 .split("\n")[0].split(" "))
