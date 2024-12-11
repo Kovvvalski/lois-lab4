@@ -59,7 +59,7 @@ public class FuzzyPremise {
         }
         this.equationsSystem = equations;
 
-        // инициализируем единственное решение как [1, 1]
+        // инициализируем единственное решение как [0, 1]
         Set<Map<String, Pair<Double, Double>>> equationsSolutions = new HashSet<>(Set.of(
                 matrix.keySet().stream().collect(Collectors.toMap(var -> var, var -> new Pair<>(0D, 1D)))));
 
