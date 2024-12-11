@@ -1,9 +1,9 @@
 /**
- * Лабораторная работа №3 по дисциплине Логические основы интеллектуальных систем
+ * Лабораторная работа №2 по дисциплине Логические основы интеллектуальных систем
  * Выполнена студентами гр. 221703 БГУИР Быльковым Даниилом Владимировичем, Аврукевичем Константином Сергеевичем
- * Файл описывает класс нечеткой импликации
- * Вариант 3
- * 4.11.24
+ * Файл описывает класс нечеткого бинарного предиката
+ * Вариант 2
+ * 9.12.24
  */
 
 package by.kovalski.fuzzyinference.entity;
@@ -59,10 +59,6 @@ public class BinaryFuzzyPredicate {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append(set1.name).append("~>").append(set2.name).append("  ");
-        set2.getElements().keySet().forEach(header -> stringBuilder.append(header).append(" "));
-        stringBuilder.append("\n");
 
         relationMatrix.forEach((rowKey, rowValues) -> {
             stringBuilder.append(rowKey).append(": ");

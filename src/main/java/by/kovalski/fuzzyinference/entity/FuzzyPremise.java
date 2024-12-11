@@ -1,3 +1,11 @@
+/**
+ * Лабораторная работа №2 по дисциплине Логические основы интеллектуальных систем
+ * Выполнена студентами гр. 221703 БГУИР Быльковым Даниилом Владимировичем, Аврукевичем Константином Сергеевичем
+ * Файл описывает класс нечеткой посылки
+ * Вариант 2
+ * 9.12.24
+ */
+
 package by.kovalski.fuzzyinference.entity;
 
 import java.util.*;
@@ -39,7 +47,7 @@ public class FuzzyPremise {
     }
 
     // метод расчета посылки
-    void calculate() {
+    public void calculate() {
         var matrix = binaryFuzzyPredicate.getRelationMatrix();
         var transposedMatrix = transposeMatrix(matrix);
         Map<List<Pair<String, Double>>, Double> equations = new HashMap<>();
@@ -156,25 +164,5 @@ public class FuzzyPremise {
             }
         }
         return transposedMatrix;
-    }
-
-
-    public static void main(String[] args) {
-        Map<String, Double> elementsSet1 = new HashMap<>();
-        elementsSet1.put("y1", 0.9);
-        elementsSet1.put("y2", 0.1);
-        elementsSet1.put("y3", 0.2);
-        FuzzyPredicate conclusion = new FuzzyPredicate("Set1", elementsSet1);
-
-        Map<String, List<Pair<String, Double>>> implicationMatrix = new HashMap<>();
-        implicationMatrix.put("x1", Arrays.asList(new Pair<>("y1", 0.9), new Pair<>("y2", 0.1), new Pair<>("y3", 0.2)));
-        implicationMatrix.put("x2", Arrays.asList(new Pair<>("y1", 0.6), new Pair<>("y2", 0.5), new Pair<>("y3", 0.5)));
-        BinaryFuzzyPredicate binaryFuzzyPredicate = new BinaryFuzzyPredicate(conclusion, null, implicationMatrix);
-
-        FuzzyPremise fuzzyPremise = new FuzzyPremise(binaryFuzzyPredicate, conclusion);
-        fuzzyPremise.calculate();
-        for (var solution : fuzzyPremise.solutions) {
-            System.out.println(solution);
-        }
     }
 }
