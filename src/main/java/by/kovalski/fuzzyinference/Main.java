@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    static String FILE_PATH = "src/main/resources/test1.kb";
+    static String FILE_PATH = "src/main/resources/test3.kb";
 
     static KnowledgeBaseParser knowledgeBaseParser = new KBParserImpl(FILE_PATH, new KnowledgeBaseValidatorImpl());
 
@@ -84,7 +84,7 @@ public class Main {
                                 })
                                 .collect(Collectors.joining(" ∧ ")) +
                         ")")
-                .collect(Collectors.joining(" ∪\n"));
+                .collect(Collectors.joining(" ∨\n"));
 
         System.out.println(solutionsStr);
     }
